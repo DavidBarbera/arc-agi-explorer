@@ -1,0 +1,20 @@
+{
+  "name": "arc-agi-explorer",
+  "version": "1.0.0",
+  "description": "ARC-AGI-2 Dataset Explorer — browse, visualize, and create solutions for ARC Prize 2026 tasks",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.0"
+  }
+}
