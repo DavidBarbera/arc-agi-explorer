@@ -7,6 +7,10 @@ A browser-based tool for exploring, visualising, and creating solutions for
 ![React 18](https://img.shields.io/badge/React-18-61dafb?style=flat-square)
 ![Vite](https://img.shields.io/badge/Vite-6-646cff?style=flat-square)
 
+<p align="center">
+  <img src="public/preview.svg" alt="ARC-AGI-2 Explorer preview" width="800" />
+</p>
+
 ---
 
 ## Quick Start
