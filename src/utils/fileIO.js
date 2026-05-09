@@ -324,3 +324,68 @@ export function importTestSolutions(solObj) {
   }
   return result;
 }
+
+/* ─── Load bundled dataset from public/data/ ───────────────────────── */
+
+const DATA_BASE = import.meta.env.BASE_URL + "data/";
+
+/**
+ * Silently fetch a JSON file from the bundled data folder.
+ * Returns the parsed object or null if not found / error.
+ */
+async function fetchJson(filename) {
+  try {
+    const res = await fetch(DATA_BASE + filename);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Known bundled dataset files (Kaggle consolidated format).
+ * The app tries to fetch each on startup; missing files are silently skipped.
+ */
+const BUNDLED_FILES = [
+  { set: "train",      kind: "challenges", file: "arc-agi_training_challenges.json" },
+  { set: "train",      kind: "solutions",  file: "arc-agi_training_solutions.json" },
+  { set: "evaluation", kind: "challenges", file: "arc-agi_evaluation_challenges.json" },
+  { set: "evaluation", kind: "solutions",  file: "arc-agi_evaluation_solutions.json" },
+  { set: "test",       kind: "challenges", file: "arc-agi_test_challenges.json" },
+  { set: "test",       kind: "solutions",  file: "arc-agi_test_solutions.json" },
+];
+
+/**
+ * Load all available bundled dataset files from public/data/.
+ * Returns { datasets, solutions, testSolExisting } — same shape
+ * as the folder loaders, ready for applyLoadResult().
+ */
+export async function loadBundledData() {
+  const datasets = { train: null, evaluation: null, test: null };
+  const solutions = { train: null, evaluation: null, test: null };
+  let testSolExisting = null;
+
+  const results = await Promise.all(
+    BUNDLED_FILES.map(async ({ set, kind, file }) => {
+      const data = await fetchJson(file);
+      return { set, kind, data };
+    })
+  );
+
+  for (const { set, kind, data } of results) {
+    if (!data) continue;
+    if (kind === "challenges") {
+      datasets[set] = data;
+    } else if (kind === "solutions") {
+      if (set === "test") {
+        testSolExisting = data;
+      } else {
+        solutions[set] = data;
+      }
+    }
+  }
+
+  const anyLoaded = Object.values(datasets).some(Boolean);
+  return { datasets, solutions, testSolExisting, anyLoaded };
+}

@@ -5,6 +5,7 @@ import { loadCreatedSolutions, saveCreatedSolutions } from "../utils/storage";
 import {
   loadDatasetFromDirectoryPicker,
   loadDatasetFromFolder,
+  loadBundledData,
   writeSolutionsFile,
   buildSolutionsObject,
   downloadSolutions,
@@ -45,6 +46,44 @@ export function AppProvider({ children }) {
   useEffect(() => {
     saveCreatedSolutions(createdSolutions);
   }, [createdSolutions]);
+
+  /* ── Auto-load bundled dataset from public/data/ on mount ── */
+  const bundledLoadedRef = useRef(false);
+  useEffect(() => {
+    if (bundledLoadedRef.current) return;
+    bundledLoadedRef.current = true;
+
+    (async () => {
+      setIsLoading(true);
+      try {
+        const { datasets: ds, solutions: sol, testSolExisting, anyLoaded } =
+          await loadBundledData();
+        if (anyLoaded) {
+          setFolderName("bundled");
+          setDatasets(ds);
+          setSolutionSets(sol);
+
+          // Import test solutions into createdSolutions
+          if (testSolExisting) {
+            setCreatedSolutions((prev) => {
+              const next = deepCopy(prev);
+              const imported = importTestSolutions(testSolExisting);
+              next.test = { ...(next.test || {}), ...imported };
+              return next;
+            });
+          }
+
+          // Auto-select first non-empty tab
+          if (ds.evaluation) setCurrentSet("evaluation");
+          else if (ds.train) setCurrentSet("train");
+          else if (ds.test) setCurrentSet("test");
+        }
+      } catch (err) {
+        console.error("Failed to load bundled data:", err);
+      }
+      setIsLoading(false);
+    })();
+  }, []);
 
   /* ── Derived ── */
   const currentChallenges = datasets[currentSet];

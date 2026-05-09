@@ -93,7 +93,7 @@ export default function TopBar() {
         {/* Folder indicator */}
         {folderName && (
           <span className="text-xs px-2 py-0.5 rounded" style={{ background: "var(--bg-raised)", color: "var(--text-secondary)", border: "1px solid var(--border-default)" }}>
-            📁 {folderName}
+            {folderName === "bundled" ? "📦 bundled data" : `📁 ${folderName}`}
           </span>
         )}
       </div>

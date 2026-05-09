@@ -30,9 +30,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Data (users load their own datasets)
-data/
+# Data
+# Ignore loose JSON files at root, but keep the bundled dataset
 *.json
 !package.json
 !package-lock.json
 !tsconfig.json
+!public/data/*.json
