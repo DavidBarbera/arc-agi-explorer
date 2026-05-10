@@ -107,7 +107,7 @@ export default function TaskView() {
         >
           TRAINING EXAMPLES
         </h3>
-        <div className="flex flex-wrap gap-5">
+        <div className="flex flex-col gap-3">
           {task.train.map((pair, i) => (
             <PairRow key={i} input={pair.input} output={pair.output} index={i} />
           ))}
@@ -122,7 +122,7 @@ export default function TaskView() {
         >
           TEST INPUTS
         </h3>
-        <div className="flex flex-wrap gap-5">
+        <div className="flex flex-col gap-3">
           {task.test.map((pair, ti) => {
             const sol = getSolution(ti);
             const isRevealed = revealedSet.has(ti);
